@@ -4,6 +4,7 @@ from max7219 import Matrix8x8
 from rotary_irq_rp2 import RotaryIRQ
 from time import gmtime
 import time
+import math
 
 button = Pin(15, Pin.IN, Pin.PULL_UP)
 
@@ -118,42 +119,61 @@ GLYPHS = {
     ],
 }
 
-def tweenBrightness():
-    for x in range(0, 16):
-        matrix.brightness(x)
-        matrix.show()
-        time.sleep(.1)
-        print("(brightness doesn't show in wokwi) Brightness: " + str(x))
-    for x in reversed(range(0,16)):
-        matrix.brightness(x)
-        matrix.show()
-        time.sleep(.1)
-        print("(brightness doesn't show in wokwi) Brightness: " + str(x))
-
 TIMER_ON = False
 FINAL_UNIX = 0
 FINAL = False
 STOP_UNIX = 0
 STOP = True
 
+HOURS = 0
+MINUTES = 0
+SELECTED = 1
+SELECTING  = True
+
+def timerFrame():
+    unixTill = STOP_UNIX - time.time()
+    hoursTill = math.floor(unixTill/3600)
+    minutesTill = math.floor((unixTill-(hoursTill*3600))/60)
+    secondsTill = unixTill-(hoursTill*3600)-(minutesTill*60)
+    
+    display.fill(0)
+    display.text(str(hoursTill)  ,30 , 29, 1)
+    display.text(str(minutesTill),60, 29, 1)
+    display.text(str(secondsTill),90, 29, 1)
+    display.show()
+
+def tweenBrightness():
+    for x in range(0, 16):
+        timerFrame()
+        matrix.brightness(x)
+        matrix.show()
+        time.sleep(.1)
+        print("(brightness doesn't show in wokwi) Brightness: " + str(x))
+    for x in reversed(range(0,16)):
+        timerFrame()
+        matrix.brightness(x)
+        matrix.show()
+        time.sleep(.1)
+        print("(brightness doesn't show in wokwi) Brightness: " + str(x))
+
 def cycle():
     global FINAL
     while FINAL == False:
-        matrix.text_from_glyph(a, GLYPHS)
+        matrix.text_from_glyph("a", GLYPHS)
         matrix.show()
         tweenBrightness()
         for x in range(1, 5):
-            print(x)
+            print(time.time())
+            print(FINAL_UNIX)
             matrix.text_from_glyph(str(x), GLYPHS)
             matrix.show()
             tweenBrightness()
-        print(time.time())
-        print(FINAL_UNIX)
-    if time.time() == FINAL_UNIX:
-        finalCycle()
+        if FINAL_UNIX-15 <= time.time() >= FINAL_UNIX+16:
+            FINAL = True
+    finalCycle()
 
 def finalCycle():
-    matrix.text_from_glyph(a, GLYPHS)
+    matrix.text_from_glyph("a", GLYPHS)
     matrix.show()
     tweenBrightness()
     for x in range(5, 9):
@@ -163,15 +183,11 @@ def finalCycle():
     while STOP == False:
         tweenBrightness()
 
-HOURS = 0
-MINUTES = 0
-BOTTOMLine = "Start Timer"
-SELECTED = 1
-SELECTING  = True
-
 def startTimer():
     global SELECTING
     global TIMER_ON
+    global STOP
+    STOP = False
     TIMER_ON = True
     SELECTING = False
 
@@ -183,11 +199,13 @@ def startTimer():
     FINAL_UNIX = STOP_UNIX - 15
     cycle()
 
+
+
 def updateFrame():
     display.fill(0)
     display.text("Hours:   " + str(HOURS),    4, 14, 1)
     display.text("Minutes: " + str(MINUTES), 4, 24, 1)
-    display.text(BOTTOMLine, 4, 34, 1)
+    display.text("Start Timer", 4, 34, 1)
     
     if SELECTED == 1:
         display.hline(32, 22, 64, 1)
@@ -199,17 +217,29 @@ def updateFrame():
 updateFrame()
 
 def rotary():
+    global STOP
+    global TIMER_ON
+    global SELECTING
     global HOURS
     global MINUTES
-    if SELECTED == 1:
-        HOURS = r.value()
-    elif SELECTED == 2:
-        MINUTES = r.value()
-    elif SELECTED == 3:
-        if HOURS == 0 and MINUTES == 0:
-            print("a")
-        else:
-            startTimer()
+    if TIMER_ON == False:
+        if SELECTED == 1:
+            HOURS = r.value()
+        elif SELECTED == 2:
+            MINUTES = r.value()
+        elif SELECTED == 3:
+            if HOURS == 0 and MINUTES == 0:
+                print("a")
+            else:
+                startTimer()
+    elif TIMER_ON == True:
+        if STOP == False:
+            STOP = True
+            TIMER_ON = False
+            SELECTING = True
+            loop()
+
+
     updateFrame()
 
 r.add_listener(rotary)
@@ -222,9 +252,11 @@ def loop():
         if button.value() == 0 and (first and not second):
             global STOP
             global FINAL
+            """
             if FINAL == True:
                 STOP = True
                 FINAL = False
+            """
             global SELECTED
             if SELECTED == 3:
                 SELECTED = 1
