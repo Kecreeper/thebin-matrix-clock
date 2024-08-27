@@ -24,7 +24,7 @@
       "left": 86.63,
       "attrs": { "i2cAddress": "0x3c" }
     },
-    { "type": "wokwi-ky-040", "id": "encoder1", "top": 116.9, "left": -221.6, "attrs": {} }
+    { "type": "wokwi-ky-040", "id": "encoder1", "top": 116.9, "left": -183.2, "attrs": {} }
   ],
   "connections": [
     [ "matrix1:V+", "pico:VBUS", "red", [ "h0" ] ],
@@ -39,8 +39,8 @@
     [ "encoder1:CLK", "pico:GP12", "green", [ "h0" ] ],
     [ "encoder1:DT", "pico:GP13", "green", [ "h0" ] ],
     [ "encoder1:GND", "pico:GND.1", "black", [ "h48", "v0.8" ] ],
-    [ "encoder1:VCC", "pico:3V3", "red", [ "h144", "v-134" ] ],
-    [ "encoder1:SW", "pico:GP15", "green", [ "h86.4", "v19.3" ] ]
+    [ "encoder1:VCC", "pico:3V3", "red", [ "h105.6", "v-134" ] ],
+    [ "encoder1:SW", "pico:GP15", "green", [ "h57.6", "v19.3" ] ]
   ],
   "dependencies": {}
 }

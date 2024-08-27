@@ -40,32 +40,32 @@ GLYPHS = {
     "2": [
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 1, 1, 1, 1, 0, 0],
+        [0, 0, 0, 1, 1, 0, 0, 0],
         [0, 0, 1, 0, 0, 1, 0, 0],
         [0, 0, 1, 0, 0, 1, 0, 0],
-        [0, 0, 1, 1, 1, 1, 0, 0],
+        [0, 0, 0, 1, 1, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
     ],
     "3": [
         [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 1, 1, 1, 1, 1, 0],
+        [0, 0, 0, 1, 1, 0, 0, 0],
+        [0, 0, 1, 0, 0, 1, 0, 0],
         [0, 1, 0, 0, 0, 0, 1, 0],
         [0, 1, 0, 0, 0, 0, 1, 0],
-        [0, 1, 0, 0, 0, 0, 1, 0],
-        [0, 1, 0, 0, 0, 0, 1, 0],
-        [0, 1, 1, 1, 1, 1, 1, 0],
+        [0, 0, 1, 0, 0, 1, 0, 0],
+        [0, 0, 0, 1, 1, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
     ],
     "4": [
-        [1, 1, 1, 1, 1, 1, 1, 1],
+        [0, 0, 1, 1, 1, 1, 0, 0],
+        [0, 1, 0, 0, 0, 0, 1, 0],
         [1, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1],
+        [0, 1, 0, 0, 0, 0, 1, 0],
+        [0, 0, 1, 1, 1, 1, 0, 0],
     ],
     "5": [
         [0, 0, 0, 0, 0, 0, 0, 0],
@@ -137,9 +137,12 @@ def timerFrame():
     secondsTill = unixTill-(hoursTill*3600)-(minutesTill*60)
     
     display.fill(0)
-    display.text(str(hoursTill)  ,30 , 29, 1)
+    display.text(str(hoursTill)  ,30, 29, 1)
     display.text(str(minutesTill),60, 29, 1)
     display.text(str(secondsTill),90, 29, 1)
+    if unixTill <= 0:
+        display.fill(0)
+        display.text("Timer Up!", 30, 29, 1)
     display.show()
 
 def tweenBrightness():
@@ -167,9 +170,10 @@ def cycle():
             print(FINAL_UNIX)
             matrix.text_from_glyph(str(x), GLYPHS)
             matrix.show()
+            if FINAL_UNIX-5 <= time.time():
+                FINAL = True
+                break
             tweenBrightness()
-        if FINAL_UNIX-15 <= time.time() >= FINAL_UNIX+16:
-            FINAL = True
     finalCycle()
 
 def finalCycle():
