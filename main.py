@@ -2,10 +2,11 @@ from machine import Pin, SPI, I2C, RTC
 from ssd1306 import SSD1306_I2C
 from max7219 import Matrix8x8
 from rotary_irq_rp2 import RotaryIRQ
-import time
-import asyncio
+from ds1307 import DS1307
+from time import gmtime, time
 
-rtc = RTC()
+i2c_rtc = I2C(1, scl=Pin(27), sda=Pin(26), freq=800000)
+ds1307 = DS1307(addr=0x68, i2c=i2c_rtc)
 
 button = Pin(15, Pin.IN, Pin.PULL_UP)
 
@@ -131,6 +132,7 @@ def cycle():
     matrix.show()
     tweenBrightness()
 
+
 """
 TOPLine    = "Hours:   " + str(HOURS)
 MIDDLELine = "Minutes: " + str(MINUTES)
@@ -195,5 +197,3 @@ def loop():
 
             print(SELECTED)
             updateFrame()
-
-loop()
