@@ -24,17 +24,7 @@
       "left": 144.23,
       "attrs": { "i2cAddress": "0x3c" }
     },
-    { "type": "wokwi-ky-040", "id": "encoder1", "top": 116.9, "left": -221.6, "attrs": {} },
-    {
-      "type": "wokwi-ds1307",
-      "id": "rtc1",
-      "top": -119.9,
-      "left": 93.2,
-      "rotate": 270,
-      "attrs": {
-        "initTime": "0"
-      }
-    }
+    { "type": "wokwi-ky-040", "id": "encoder1", "top": 116.9, "left": -221.6, "attrs": {} }
   ],
   "connections": [
     [ "matrix1:V+", "pico:VBUS", "red", [ "h0" ] ],
@@ -50,11 +40,7 @@
     [ "encoder1:DT", "pico:GP13", "green", [ "h0" ] ],
     [ "encoder1:GND", "pico:GND.1", "black", [ "h48", "v0.8" ] ],
     [ "encoder1:VCC", "pico:3V3", "red", [ "h144", "v-134" ] ],
-    [ "encoder1:SW", "pico:GP15", "green", [ "h86.4", "v19.3" ] ],
-    [ "rtc1:GND", "pico:GND.8", "black", [ "v0" ] ],
-    [ "rtc1:5V", "pico:VBUS", "red", [ "v0" ] ],
-    [ "rtc1:SCL", "pico:GP27", "green", [ "v0" ] ],
-    [ "rtc1:SDA", "pico:GP26", "green", [ "v0" ] ]
+    [ "encoder1:SW", "pico:GP15", "green", [ "h86.4", "v19.3" ] ]
   ],
   "dependencies": {}
 }
